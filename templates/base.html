@@ -1,19 +1,22 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
-  <title>
-    {% block title %}FLASK PLATZI |{% endblock  %}
-</title>
- 
-</head>
+{% extends "bootstrap/base.html" %}
 
-<body>
-    <header>
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+    <title>
+      {% block title %}FLASK PLATZI |{% endblock  %}
+  </title>
+{% endblock  %}
+  
+
+
+
+
+{% block body %}
+    {% block navbar %}
         {% include 'navbar.html' %}
-    </header>
+    {% endblock  %}
 {% block  content %}{% endblock  %}
-</body>
-</html>
+{% endblock  %}
+
 
