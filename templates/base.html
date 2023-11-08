@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+  <title>
+    {% block title %}FLASK PLATZI |{% endblock  %}
+</title>
+ 
+</head>
+
+<body>
+    <header>
+        {% include 'navbar.html' %}
+    </header>
+{% block  content %}{% endblock  %}
+</body>
+</html>
+
