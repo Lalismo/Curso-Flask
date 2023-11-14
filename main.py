@@ -1,22 +1,11 @@
-from flask import Flask, request, make_response, redirect,render_template,abort,session, url_for,flash
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms.fields import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
+from flask import request, make_response, redirect,render_template,abort,session, url_for,flash
 import unittest
+from flask_login import login_required, current_user
+from app.forms import LoginForm
+from app import create_app
+from app.firestore_service import get_users, get_todos
 
-
-app = Flask(__name__)
-bootstrap = Bootstrap(app)
-
-app.config['SECRET_KEY'] = 'SUPER SECRETO'
-
-todos = ['Comprar cafe', 'enviar solicitud de compra', 'Entregar video a productor']
-
-class LoginForm(FlaskForm):
-    username = StringField('Nombre de usuario', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    sumit = SubmitField('Enviar')
+app = create_app()
     
 @app.cli.command()
 def test():
@@ -60,31 +49,20 @@ def index():
     return response
 
  #Creamos la ruta de hello y definimos su función
-@app.route('/hello', methods=['GET', 'POST'])
+@app.route('/hello', methods=['GET'])
+@login_required
 def hello():
-    #Creamos la variable user_ip para poder tener el request de la ip que se almacena en la session
     user_ip = session.get('user_ip')
-    login_form =LoginForm()
-    username = session.get('username')
+    username = current_user.id
+
     context = {
         'user_ip': user_ip,
-        'todos': todos,
-        'login_form':login_form,
+        'todos': get_todos(user_id=username),
         'username': username
     }
-   
-    if login_form.validate_on_submit():
-        username = login_form.username.data
-        session['username'] = username
-        
-        flash('Nombre de usuario registrado con éxito')
-        
-        return redirect(url_for('index', _external=True))
-    
-    return render_template('hello.html', **context )
+
+    return render_template('hello.html', **context)
 
 
 if __name__ == '__main__':
-    
-
     app.run(port = 5000, debug = True)
